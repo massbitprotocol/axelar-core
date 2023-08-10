@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  axelar-node:
+    image: axelar/core
+    container_name: axelar-node
+    command: sleep infinity
+    networks:
+      massbit:
+        ipv4_address: "172.24.97.2"
+    environment:
+    - KEYRING_PASSWORD=12345678
+    - VALIDATOR_NAME=massbit-validator-1
+    - CHAIN_ID=scalar
+    - AXELARD_CHAIN_ID=scalar
+    - TOFND_HOST=172.24.97.9
+    - NODE_MONIKER=massbit-validator-1
+    volumes:
+    - ./home:/home/axelard/.axelar
+    - ./entrypoint.sh:/entrypoint.sh
+
+networks:
+  massbit:
+    external: true

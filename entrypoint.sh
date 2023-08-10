@@ -28,8 +28,9 @@ startValdProc() {
     RECOVERY="--tofnd-recovery=$RECOVERY_FILE"
   fi
 
-  axelard vald-start ${TOFND_HOST:+--tofnd-host "$TOFND_HOST"} ${VALIDATOR_HOST:+--node "$VALIDATOR_HOST"} \
-    --validator-addr "${VALIDATOR_ADDR:-$(axelard keys show validator -a --bech val)}" "$RECOVERY"
+  echo $KEYRING_PASSWORD | axelard vald-start --chain-id "$CHAIN_ID" --from "$VALIDATOR_NAME" \
+    ${TOFND_HOST:+--tofnd-host "$TOFND_HOST"} ${VALIDATOR_HOST:+--node "$VALIDATOR_HOST"} \
+    --validator-addr "${VALIDATOR_ADDR:-$(echo $KEYRING_PASSWORD | axelard keys show $VALIDATOR_NAME -a --bech val)}" "$RECOVERY"
 }
 
 startNodeProc() {
