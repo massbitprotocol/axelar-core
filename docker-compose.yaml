@@ -1,13 +1,13 @@
 version: "3"
 
 services:
-  axelar-node:
+  node1:
     image: axelar/core
-    container_name: axelar-node
-    command: sleep infinity
+    container_name: axelar-node-1
+    # command: sleep infinity
     networks:
       massbit:
-        ipv4_address: "172.24.97.2"
+        ipv4_address: "172.24.97.11"
     environment:
     - KEYRING_PASSWORD=12345678
     - VALIDATOR_NAME=massbit-validator-1
@@ -16,7 +16,61 @@ services:
     - TOFND_HOST=172.24.97.9
     - NODE_MONIKER=massbit-validator-1
     volumes:
-    - ./home:/home/axelard/.axelar
+    - ./home/node1:/home/axelard/.axelar
+    - ./entrypoint.sh:/entrypoint.sh
+  
+  node2:
+    image: axelar/core
+    container_name: axelar-node-2
+    # command: sleep infinity
+    networks:
+      massbit:
+        ipv4_address: "172.24.97.12"
+    environment:
+    - KEYRING_PASSWORD=12345678
+    - VALIDATOR_NAME=massbit-validator-2
+    - CHAIN_ID=scalar
+    - AXELARD_CHAIN_ID=scalar
+    - TOFND_HOST=172.24.97.9
+    - NODE_MONIKER=massbit-validator-2
+    volumes:
+    - ./home/node2:/home/axelard/.axelar
+    - ./entrypoint.sh:/entrypoint.sh
+  
+  node3:
+    image: axelar/core
+    container_name: axelar-node-3
+    # command: sleep infinity
+    networks:
+      massbit:
+        ipv4_address: "172.24.97.13"
+    environment:
+    - KEYRING_PASSWORD=12345678
+    - VALIDATOR_NAME=massbit-validator-3
+    - CHAIN_ID=scalar
+    - AXELARD_CHAIN_ID=scalar
+    - TOFND_HOST=172.24.97.9
+    - NODE_MONIKER=massbit-validator-3
+    volumes:
+    - ./home/node3:/home/axelard/.axelar
+    - ./entrypoint.sh:/entrypoint.sh
+  
+  node4:
+    image: axelar/core
+    container_name: axelar-node-4
+    # command: sleep infinity
+    networks:
+      massbit:
+        ipv4_address: "172.24.97.14"
+    environment:
+    - KEYRING_PASSWORD=12345678
+    - VALIDATOR_NAME=massbit-validator-4
+    - CHAIN_ID=scalar
+    - AXELARD_CHAIN_ID=scalar
+    - TOFND_HOST=172.24.97.9
+    - NODE_MONIKER=massbit-validator-4
+    volumes:
+    - ./home/node4:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
 
 networks:
