@@ -13,11 +13,24 @@ services:
     - VALIDATOR_NAME=massbit-validator-1
     - CHAIN_ID=scalar
     - AXELARD_CHAIN_ID=scalar
-    - TOFND_HOST=172.24.97.9
+    - TOFND_HOST=172.24.97.21
     - NODE_MONIKER=massbit-validator-1
     volumes:
     - ./home/node1:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
+  
+  tofnd1:
+    container_name: tofnd1
+    hostname: tofnd1
+    networks:
+      massbit:
+        ipv4_address: "172.24.97.21"
+    image: axelar/tofnd
+    volumes:
+      - ./home/node1/.tofnd:/.tofnd
+    environment:
+      - MNEMONIC_CMD=auto
+    user: root
   
   node2:
     image: axelar/core
@@ -31,11 +44,24 @@ services:
     - VALIDATOR_NAME=massbit-validator-2
     - CHAIN_ID=scalar
     - AXELARD_CHAIN_ID=scalar
-    - TOFND_HOST=172.24.97.9
+    - TOFND_HOST=172.24.97.22
     - NODE_MONIKER=massbit-validator-2
     volumes:
     - ./home/node2:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
+  
+  tofnd2:
+    container_name: tofnd2
+    hostname: tofnd2
+    networks:
+      massbit:
+        ipv4_address: "172.24.97.22"
+    image: axelar/tofnd
+    volumes:
+      - ./home/node2/.tofnd:/.tofnd
+    environment:
+      - MNEMONIC_CMD=auto
+    user: root
   
   node3:
     image: axelar/core
@@ -49,11 +75,24 @@ services:
     - VALIDATOR_NAME=massbit-validator-3
     - CHAIN_ID=scalar
     - AXELARD_CHAIN_ID=scalar
-    - TOFND_HOST=172.24.97.9
+    - TOFND_HOST=172.24.97.23
     - NODE_MONIKER=massbit-validator-3
     volumes:
     - ./home/node3:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
+  
+  tofnd3:
+    container_name: tofnd3
+    hostname: tofnd3
+    networks:
+      massbit:
+        ipv4_address: "172.24.97.23"
+    image: axelar/tofnd
+    volumes:
+      - ./home/node3/.tofnd:/.tofnd
+    environment:
+      - MNEMONIC_CMD=auto
+    user: root
   
   node4:
     image: axelar/core
@@ -67,11 +106,24 @@ services:
     - VALIDATOR_NAME=massbit-validator-4
     - CHAIN_ID=scalar
     - AXELARD_CHAIN_ID=scalar
-    - TOFND_HOST=172.24.97.9
+    - TOFND_HOST=172.24.97.24
     - NODE_MONIKER=massbit-validator-4
     volumes:
     - ./home/node4:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
+  
+  tofnd4:
+    container_name: tofnd4
+    hostname: tofnd4
+    networks:
+      massbit:
+        ipv4_address: "172.24.97.24"
+    image: axelar/tofnd
+    volumes:
+      - ./home/node4/.tofnd:/.tofnd
+    environment:
+      - MNEMONIC_CMD=auto
+    user: root
 
 networks:
   massbit:
