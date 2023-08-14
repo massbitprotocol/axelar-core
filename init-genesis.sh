@@ -16,7 +16,7 @@ $axelard gentx massbit-validator-1 100000000stake --chain-id $CHAIN_ID --home=$H
 # Add the gentx to the genesis file.
 $axelard collect-gentxs --home=$HOME"1"
 
-# persistent_peers
+# seeds
 for i in 2 3 4
 do
 $axelard init massbit-node-i --chain-id $CHAIN_ID --home=$HOME"$i"
@@ -29,7 +29,7 @@ PEER2=$($axelard tendermint show-node-id --home=$HOME"2")@172.24.97.12:26656
 PEER3=$($axelard tendermint show-node-id --home=$HOME"3")@172.24.97.13:26656
 PEER4=$($axelard tendermint show-node-id --home=$HOME"4")@172.24.97.14:26656
 
-sed -i "s/persistent_peers = \"\"/persistent_peers = \"$PEER2,$PEER3,$PEER4\"/g" $HOME"1/config/config.toml"
-sed -i "s/persistent_peers = \"\"/persistent_peers = \"$PEER1,$PEER3,$PEER4\"/g" $HOME"2/config/config.toml"
-sed -i "s/persistent_peers = \"\"/persistent_peers = \"$PEER1,$PEER2,$PEER4\"/g" $HOME"3/config/config.toml"
-sed -i "s/persistent_peers = \"\"/persistent_peers = \"$PEER1,$PEER2,$PEER3\"/g" $HOME"4/config/config.toml"
+sed -i "s/seeds = \"\"/seeds = \"$PEER2,$PEER3,$PEER4\"/g" $HOME"1/config/config.toml"
+sed -i "s/seeds = \"\"/seeds = \"$PEER1,$PEER3,$PEER4\"/g" $HOME"2/config/config.toml"
+sed -i "s/seeds = \"\"/seeds = \"$PEER1,$PEER2,$PEER4\"/g" $HOME"3/config/config.toml"
+sed -i "s/seeds = \"\"/seeds = \"$PEER1,$PEER2,$PEER3\"/g" $HOME"4/config/config.toml"
