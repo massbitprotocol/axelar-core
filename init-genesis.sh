@@ -19,7 +19,11 @@ $axelard collect-gentxs --home=$HOME"1"
 # seeds
 for i in 2 3 4
 do
-$axelard init massbit-node-i --chain-id $CHAIN_ID --home=$HOME"$i"
+# init node
+$axelard init massbit-node-$i --chain-id $CHAIN_ID --home=$HOME"$i"
+# generate key for validator
+$axelard keys add massbit-validator-$i --home=$HOME"$i"
+
 cp $HOME"1/config/genesis.json" $HOME"$i/config/genesis.json"
 done
 
@@ -33,3 +37,14 @@ sed -i "s/seeds = \"\"/seeds = \"$PEER2,$PEER3,$PEER4\"/g" $HOME"1/config/config
 sed -i "s/seeds = \"\"/seeds = \"$PEER1,$PEER3,$PEER4\"/g" $HOME"2/config/config.toml"
 sed -i "s/seeds = \"\"/seeds = \"$PEER1,$PEER2,$PEER4\"/g" $HOME"3/config/config.toml"
 sed -i "s/seeds = \"\"/seeds = \"$PEER1,$PEER2,$PEER3\"/g" $HOME"4/config/config.toml"
+
+# setup EVM
+EVM_CONFIG="
+[[axelar_bridge_evm]]
+name = \"Ethereum Goerli\"
+rpc_addr = \"https://ethereum-goerli.publicnode.com\"
+start-with-bridge = false"
+for i in 1 2 3 4
+do
+echo "$EVM_CONFIG" >> $HOME"$i/config/config.toml"
+done
