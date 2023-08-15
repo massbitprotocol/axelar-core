@@ -72,3 +72,5 @@ for i in 1 2 3 4
 do
 docker exec -it axelar-node-$i /bin/sh /init-validator.sh
 done
+
+echo "==> 4 nodes is running, run \`docker compose up\` to check logs"
