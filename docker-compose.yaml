@@ -11,6 +11,7 @@ services:
     environment:
     - KEYRING_PASSWORD=12345678
     - VALIDATOR_NAME=massbit-validator-1
+    - BROADCASTER_NAME=massbit-broadcaster-1
     - CHAIN_ID=scalar
     - AXELARD_CHAIN_ID=scalar
     - TOFND_HOST=172.24.97.21
@@ -18,6 +19,7 @@ services:
     volumes:
     - ./home/node1:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
+    - ./init-validator.sh:/init-validator.sh
   
   tofnd1:
     container_name: tofnd1
@@ -42,6 +44,7 @@ services:
     environment:
     - KEYRING_PASSWORD=12345678
     - VALIDATOR_NAME=massbit-validator-2
+    - BROADCASTER_NAME=massbit-broadcaster-2
     - CHAIN_ID=scalar
     - AXELARD_CHAIN_ID=scalar
     - TOFND_HOST=172.24.97.22
@@ -49,6 +52,7 @@ services:
     volumes:
     - ./home/node2:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
+    - ./init-validator.sh:/init-validator.sh
   
   tofnd2:
     container_name: tofnd2
@@ -73,6 +77,7 @@ services:
     environment:
     - KEYRING_PASSWORD=12345678
     - VALIDATOR_NAME=massbit-validator-3
+    - BROADCASTER_NAME=massbit-broadcaster-3
     - CHAIN_ID=scalar
     - AXELARD_CHAIN_ID=scalar
     - TOFND_HOST=172.24.97.23
@@ -80,6 +85,7 @@ services:
     volumes:
     - ./home/node3:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
+    - ./init-validator.sh:/init-validator.sh
   
   tofnd3:
     container_name: tofnd3
@@ -104,6 +110,7 @@ services:
     environment:
     - KEYRING_PASSWORD=12345678
     - VALIDATOR_NAME=massbit-validator-4
+    - BROADCASTER_NAME=massbit-broadcaster-4
     - CHAIN_ID=scalar
     - AXELARD_CHAIN_ID=scalar
     - TOFND_HOST=172.24.97.24
@@ -111,6 +118,7 @@ services:
     volumes:
     - ./home/node4:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
+    - ./init-validator.sh:/init-validator.sh
   
   tofnd4:
     container_name: tofnd4

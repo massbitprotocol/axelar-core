@@ -1,6 +1,5 @@
 #/bin/bash
 mkdir ./home
-INDEX=1
 HOME=$(pwd)/home/node
 axelard=$(pwd)/bin/axelard
 tofnd=$(pwd)/bin/tofnd
@@ -11,9 +10,8 @@ name = \"Ethereum Goerli\"
 rpc_addr = \"https://ethereum-goerli.publicnode.com\"
 start-with-bridge = true"
 PASSPHRASE="12345678"
-# $axelard init massbit-node-1 --chain-id $CHAIN_ID --home=$HOME"1"
-# # generate key for validator
-# $axelard keys add massbit-validator-1 --home=$HOME"1"
+
+echo "Setup genesis file and keys..."
 
 # seeds
 for i in 1 2 3 4
@@ -33,14 +31,16 @@ $axelard set-genesis-staking --bond-denom uaxl --max-validators 1000 --unbonding
 $axelard set-genesis-crisis --constant-fee=1000uaxl --home=$HOME$i
 $axelard set-genesis-gov --minimum-deposit 1000000uaxl --max-deposit-period 172800s --voting-period 172800s --home=$HOME$i
 # add genesis account
-yes $PASSPHRASE | $axelard add-genesis-account massbit-validator-$i --home=$HOME$i  10000000uaxl
+yes $PASSPHRASE | $axelard add-genesis-account massbit-validator-$i --home=$HOME$i  1000000000uaxl
+yes $PASSPHRASE | $axelard add-genesis-account massbit-broadcaster-$i --home=$HOME$i  1000000000uaxl
 # add genesis transaction
 yes $PASSPHRASE | $axelard gentx massbit-validator-$i 1000000uaxl --chain-id $CHAIN_ID --home=$HOME$i
 # # Add the gentx to the genesis file.
 $axelard collect-gentxs --home=$HOME$i
 else
 cp $HOME"$pre/config/genesis.json" $HOME"$i/config/genesis.json"
-yes $PASSPHRASE | $axelard add-genesis-account massbit-validator-$i --home=$HOME$i  10000000uaxl
+yes $PASSPHRASE | $axelard add-genesis-account massbit-validator-$i --home=$HOME$i  1000000000uaxl
+yes $PASSPHRASE | $axelard add-genesis-account massbit-broadcaster-$i --home=$HOME$i  1000000000uaxl
 fi
 pre=$i
 if [ $i = 4 ]; then
@@ -63,3 +63,12 @@ sed -i "s/seeds = \"\"/seeds = \"$PEER2,$PEER3,$PEER4\"/g" $HOME"1/config/config
 sed -i "s/seeds = \"\"/seeds = \"$PEER1,$PEER3,$PEER4\"/g" $HOME"2/config/config.toml"
 sed -i "s/seeds = \"\"/seeds = \"$PEER1,$PEER2,$PEER4\"/g" $HOME"3/config/config.toml"
 sed -i "s/seeds = \"\"/seeds = \"$PEER1,$PEER2,$PEER3\"/g" $HOME"4/config/config.toml"
+
+docker compose up -d --force-recreate
+echo "Waiting node and validator ready, please wait..."
+sleep "10s"
+echo "Init validators and proxcies..."
+for i in 1 2 3 4
+do
+docker exec -it axelar-node-$i /bin/sh /init-validator.sh
+done
