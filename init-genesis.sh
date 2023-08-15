@@ -1,30 +1,56 @@
+#/bin/bash
 mkdir ./home
 INDEX=1
 HOME=$(pwd)/home/node
 axelard=$(pwd)/bin/axelard
+tofnd=$(pwd)/bin/tofnd
 CHAIN_ID=scalar
-
-$axelard init massbit-node-1 --chain-id $CHAIN_ID --home=$HOME"1"
-# generate key for validator
-$axelard keys add massbit-validator-1 --home=$HOME"1"
-# add genesis account
-$axelard add-genesis-account massbit-validator-1 --home=$HOME"1"  100000000stake,1000000uaxl
-
-# add genesis transaction
-$axelard gentx massbit-validator-1 100000000stake --chain-id $CHAIN_ID --home=$HOME"1"
-
-# Add the gentx to the genesis file.
-$axelard collect-gentxs --home=$HOME"1"
+EVM_CONFIG="
+[[axelar_bridge_evm]]
+name = \"Ethereum Goerli\"
+rpc_addr = \"https://ethereum-goerli.publicnode.com\"
+start-with-bridge = true"
+PASSPHRASE="12345678"
+# $axelard init massbit-node-1 --chain-id $CHAIN_ID --home=$HOME"1"
+# # generate key for validator
+# $axelard keys add massbit-validator-1 --home=$HOME"1"
 
 # seeds
-for i in 2 3 4
+for i in 1 2 3 4
 do
 # init node
 $axelard init massbit-node-$i --chain-id $CHAIN_ID --home=$HOME"$i"
-# generate key for validator
-$axelard keys add massbit-validator-$i --home=$HOME"$i"
-
-cp $HOME"1/config/genesis.json" $HOME"$i/config/genesis.json"
+# generate key for validator and broadcaster
+yes $PASSPHRASE | $axelard keys add massbit-validator-$i --home=$HOME$i
+yes $PASSPHRASE | $axelard keys add massbit-broadcaster-$i --home=$HOME$i
+yes $PASSPHRASE | $tofnd -m create --directory=$HOME$i
+# BROADCASTER_ADDR=$($axelard keys show massbit-broadcaster-$i -a --home=$HOME"$i")
+# $axelard tx snapshot register-proxy $BROADCASTER_ADDR --from massbit-validator-$i --chain-id $CHAIN_ID --home=$HOME"$i" --gas auto --gas-adjustment 1.4
+if [ $i = 1 ]; then
+$axelard set-genesis-mint --blocks-per-year 3153600 --goal-bonded 0.67 --inflation-min 0.05 --inflation-max 0.1 --inflation-max-rate-change 0.05 --mint-denom uaxl --home=$HOME$i
+$axelard set-genesis-staking --bond-denom uaxl --max-validators 1000 --unbonding-period "1h" --home=$HOME$i
+# $axelard add-genesis-evm-chain "Ethereum Goerli" --home=$HOME$i
+$axelard set-genesis-crisis --constant-fee=1000uaxl --home=$HOME$i
+$axelard set-genesis-gov --minimum-deposit 1000000uaxl --max-deposit-period 172800s --voting-period 172800s --home=$HOME$i
+# add genesis account
+yes $PASSPHRASE | $axelard add-genesis-account massbit-validator-$i --home=$HOME$i  10000000uaxl
+# add genesis transaction
+yes $PASSPHRASE | $axelard gentx massbit-validator-$i 1000000uaxl --chain-id $CHAIN_ID --home=$HOME$i
+# # Add the gentx to the genesis file.
+$axelard collect-gentxs --home=$HOME$i
+else
+cp $HOME"$pre/config/genesis.json" $HOME"$i/config/genesis.json"
+yes $PASSPHRASE | $axelard add-genesis-account massbit-validator-$i --home=$HOME$i  10000000uaxl
+fi
+pre=$i
+if [ $i = 4 ]; then
+for y in 1 2 3
+do
+cp $HOME"$i/config/genesis.json" $HOME"$y/config/genesis.json"
+done
+fi
+# setup EVM
+echo "$EVM_CONFIG" >> $HOME"$i/config/config.toml"
 done
 
 # setup peers
@@ -37,14 +63,3 @@ sed -i "s/seeds = \"\"/seeds = \"$PEER2,$PEER3,$PEER4\"/g" $HOME"1/config/config
 sed -i "s/seeds = \"\"/seeds = \"$PEER1,$PEER3,$PEER4\"/g" $HOME"2/config/config.toml"
 sed -i "s/seeds = \"\"/seeds = \"$PEER1,$PEER2,$PEER4\"/g" $HOME"3/config/config.toml"
 sed -i "s/seeds = \"\"/seeds = \"$PEER1,$PEER2,$PEER3\"/g" $HOME"4/config/config.toml"
-
-# setup EVM
-EVM_CONFIG="
-[[axelar_bridge_evm]]
-name = \"Ethereum Goerli\"
-rpc_addr = \"https://ethereum-goerli.publicnode.com\"
-start-with-bridge = false"
-for i in 1 2 3 4
-do
-echo "$EVM_CONFIG" >> $HOME"$i/config/config.toml"
-done
