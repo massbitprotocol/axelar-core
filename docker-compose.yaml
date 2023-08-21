@@ -1,6 +1,19 @@
 version: "3"
 
 services:
+  evm-local:
+    image: evm-local
+    container_name: evm-local
+    command: sh "/app/start.sh"
+    networks:
+      massbit:
+        ipv4_address: "172.24.97.100"
+    volumes:
+    - ./home/evm/chain-config:/app/chain-config
+    ports:
+      - 3009:3000
+      - 8500:8500
+
   node1:
     image: axelar/core
     container_name: axelar-node-1
@@ -20,6 +33,7 @@ services:
     - ./home/node1:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
     - ./init-validator.sh:/init-validator.sh
+    - ./register-external-chain.sh:/register-external-chain.sh
   
   tofnd1:
     container_name: tofnd1
@@ -53,6 +67,7 @@ services:
     - ./home/node2:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
     - ./init-validator.sh:/init-validator.sh
+    - ./register-external-chain.sh:/register-external-chain.sh
   
   tofnd2:
     container_name: tofnd2
@@ -86,6 +101,7 @@ services:
     - ./home/node3:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
     - ./init-validator.sh:/init-validator.sh
+    - ./register-external-chain.sh:/register-external-chain.sh
   
   tofnd3:
     container_name: tofnd3
@@ -119,6 +135,7 @@ services:
     - ./home/node4:/home/axelard/.axelar
     - ./entrypoint.sh:/entrypoint.sh
     - ./init-validator.sh:/init-validator.sh
+    - ./register-external-chain.sh:/register-external-chain.sh
   
   tofnd4:
     container_name: tofnd4

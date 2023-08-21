@@ -6,9 +6,20 @@ tofnd=$(pwd)/bin/tofnd
 CHAIN_ID=scalar
 EVM_CONFIG="
 [[axelar_bridge_evm]]
-name = \"Ethereum Goerli\"
-rpc_addr = \"https://ethereum-goerli.publicnode.com\"
-start-with-bridge = true"
+name = \"Ethereum\"
+rpc_addr = \"http://172.24.97.100:8500/2\"
+start-with-bridge = true
+
+[[axelar_bridge_evm]]
+name = \"Avalanche\"
+rpc_addr = \"http://172.24.97.100:8500/0\"
+start-with-bridge = true
+
+[[axelar_bridge_evm]]
+name = \"Fantom\"
+rpc_addr = \"http://172.24.97.100:8500/1\"
+start-with-bridge = true
+"
 PASSPHRASE="12345678"
 
 echo "Setup genesis file and keys..."
@@ -28,6 +39,8 @@ if [ $i = 1 ]; then
 $axelard set-genesis-mint --blocks-per-year 3153600 --goal-bonded 0.67 --inflation-min 0.05 --inflation-max 0.1 --inflation-max-rate-change 0.05 --mint-denom uaxl --home=$HOME$i
 $axelard set-genesis-staking --bond-denom uaxl --max-validators 1000 --unbonding-period "1h" --home=$HOME$i
 # $axelard add-genesis-evm-chain "Ethereum Goerli" --home=$HOME$i
+# $axelard add-genesis-evm-chain "Avalanche" --home=$HOME$i
+# $axelard add-genesis-evm-chain "Fantom" --home=$HOME$i
 $axelard set-genesis-crisis --constant-fee=1000uaxl --home=$HOME$i
 $axelard set-genesis-gov --minimum-deposit 1000000uaxl --max-deposit-period 172800s --voting-period 172800s --home=$HOME$i
 # add genesis account
@@ -73,4 +86,5 @@ do
 docker exec -it axelar-node-$i /bin/sh /init-validator.sh
 done
 
-echo "==> 4 nodes is running, run \`docker compose up\` to check logs"
+docker compose down
+echo "==> Finished init data, run \`docker compose up\` to start nodes"
